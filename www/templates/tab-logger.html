@@ -1,54 +1,59 @@
-<ion-view view-title="Cordova SDK Request Tester"  >
+<ion-view view-title="Cordova SDK Logger Tester"  >
 
   <ion-content class="has-header  padding morePadding">
+
     <!--<ion-header-bar class="bar-dark">-->
-      <h4 class="title">Response Data</h4>
+      <h4 class="title">Logger Settings</h4>
       <!-- New Task button-->
 
 
     <div class="list">
       <label class="item item-input item-select">
         <div class="input-label">
-          Method
+          Log Level:
         </div>
-        <select ng-model="myVars.myMethod" ng-options="method for method in methods" ng-change="dosth()">
-          <option value="">-- choose method --</option>
+        <select ng-model="myVars.myLogLevel" ng-options="level as level.name for level in logLevels" ng-change="dosth()">
+          <option value="">-- choose Log Level --</option>
         </select>
       </label>
-      Method chosen:
+      Log Level chosen:
       <div style="border:solid 1px black; width:100px; height:20px"
-           ng-style="{'background-color':green}">{{myVars.myMethod}}
+           ng-style="{'background-color':green}">{{myVars.myLogLevel.name}}
       </div>
     </div>
 
     <div class="list">
       <label class="item item-input item-select">
         <div class="input-label">
-          URL
+          Route
         </div>
-        <select ng-model="myVars.myUrl" ng-options="url for url in urls" ng-change="dosth()">
-          <option value="">-- choose url --</option>
+        <select ng-model="myVars.myRoute" ng-options="route as route.route for route in routes" ng-change="dosth()">
+          <option value="">-- choose route --</option>
         </select>
       </label>
-      Url chosen:
+      Route chosen:
       <div style="border:solid 1px black;  height:20px"
-           ng-style="{'background-color':green}">{{myVars.myUrl}}
+           ng-style="{'background-color':green}">{{myVars.myRoute.route}}
       </div>
     </div>
+
     <div class="list">
 
       <div class="item item-input-inset">
         <label class="item-input-wrapper">
-          <input type="text" placeholder="Body" ng-model="myVars.body">
+          <input type="text" placeholder="Filter" ng-model="myVars.myFilter">
         </label>
       </div>
 
     </div>
-    <button class="button button-icon" ng-click="sendRequest()">
-      <i class="icon ion-ios-arrow-right"></i>
+
+    <button class="button button-icon" ng-click="sendLogs()">
+      SEND SEQ: {{myVars.sequenceNumber}}  <i class="icon ion-ios-arrow-right"></i>
     </button>
     <!--</ion-header-bar>-->
+
     <hr>
+
     <ion-list>
       <ion-item style="font-size:.7em;" ng-repeat="result in results track by $index">
         {{result}}

@@ -107,6 +107,129 @@ angular.module('starter.controllers', [])
 
   })
 
+  .controller('LoggerCtrl', function($scope) {
+    $scope.results = [];
+
+    $scope.myVars = {
+      sequenceNumber: 1,
+      isCapture: true,
+      myRoute: {"route": "http://mfptestbedapp.stage1.mybluemix.net", "guid":"5cf325a3-d325-4fb2-b4ca-1d8e46831c86"},
+      myLogLevel: {name:"DEBUG", value:300},
+      myFilter: "{\"logger1\":500,\"logger2\":300}"
+    };
+
+    $scope.logLevels = [
+      {name:"INFO" , value:500},
+      {name:"DEBUG", value:300},
+      {name:"WARN",  value:200},
+      {name:"ERROR", value:100},
+      {name:"FATAL", value:50}
+    ];
+
+    $scope.routes = [
+      {"route": "http://mfptestbedapp.stage1.mybluemix.net", "guid":"5cf325a3-d325-4fb2-b4ca-1d8e46831c86"},
+      {"route": "http://s1-imf-dev-hackdayapp-larry.stage1.mybluemix.net?subzone=dev", "guid":"85e0e3f3-882b-46d6-b5e5-645ca05f80a4"},
+    ];
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $scope.sendLogs = function() {
+
+      var success = function(response) {
+        alert("SUCCESS CALLBACK!!!");
+        console.log("Success Callback Received: " + JSON.stringify(response));
+        //add the result to the top of the array
+        $scope.$apply(function(){
+          $scope.results.unshift(
+            "SUCCESS CALLLBACK RESPONSE: \n" + JSON.stringify(response)
+          );
+        });
+
+      };
+
+      // DEFINE  FAILURE AN SUCCESS CALLBACKS
+      var failure = function(response) {
+        alert("FAILURE CALLBACK!!!");
+        console.error("Failure Callback Received: " + JSON.stringify(response));
+        //add the result to the top of the array
+        $scope.$apply(function(){$scope.results.unshift(
+          "FAILURE CALLBACK RESPONSE: \n"  + JSON.stringify(response));
+        });
+      };
+
+      // INTIALIZE THE CLEINT USING ROUTE AND GUID
+      window.BMSClient.initialize($scope.myVars.myRoute.route, $scope.myVars.myRoute.guid);
+
+      // CREATE LOGGERS
+      var logger1 = MFPLogger.getInstance("logger1");
+      var logger2 = MFPLogger.getInstance("logger2");
+
+
+      // SET CAPTURE
+      window.MFPLogger.setCapture($scope.myVars.isCapture);
+
+      //var guid = window.BMSClient.getBluemixAppGUID(function(guid) {
+      //  console.error("javascript-BMSClient From index.js = BMSClient.getBluemixAppGUID(): " + guid)
+      //  //add the result to the top of the array
+      //  $scope.$apply(function(){$scope.results.unshift("BMSClient.getBluemixAppGUID(): " + guid);});
+      //});
+      // WRITE LOG MESSAGES
+      logger1.info ("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER1: info info info");
+      logger1.debug("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER1: debug debug debug");
+      logger1.warn ("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER1: warn warn warn");
+      logger1.error("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER1: error error error");
+      logger1.fatal("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER1: fatal fatal fatal");
+
+      logger2.info ("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER2: info info info");
+      logger2.debug("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER2: debug debug debug");
+      logger2.warn ("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER2: warn warn warn");
+      logger2.error("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER2: error error error");
+      logger2.fatal("SEQ: "+ $scope.myVars.sequenceNumber +" LOGGER2: fatal fatal fatal");
+
+
+
+      if ( !$scope.myVars.myFilter || $scope.myVars.myFilter.length == 0){
+        $scope.myVars.myFilter = "{}"
+      }
+
+      //alert("Log Filters: " + $scope.myVars.myFilter);
+
+      try {
+        var theFilter = JSON.parse($scope.myVars.myFilter);
+
+        window.MFPLogger.setFilters(theFilter);
+
+        alert("Sending with Filters: " + JSON.stringify(theFilter, null, 2));
+        console.log("Sending with Filters: " + JSON.stringify(theFilter, null, 2));
+
+        // SEND THE LOG
+        window.MFPLogger.send(success, failure);
+        //increment the sequencenumber
+        $scope.myVars.sequenceNumber++
+      }
+      catch (err){
+        alert("ERROR PARSING FILTER: JSON INVALID: " + $scope.myVars.myFilter + "\n " + err);
+      }
+      //alert("URL: " + $scope.myVars.myUrl );
+      //alert("METHOD: " + $scope.myVars.myMethod );
+      //alert("BODY: " + $scope.myVars.body);
+
+      //$scope.$apply(function($scope){
+      //  $scope.results.unshift("Req method: " + $scope.myVars.myMethod, "Req Url: " + $scope.myVars.myUrl,
+      //    "Req Headers: " + JSON.stringify(reqHeaders));
+      //});
+
+
+
+    };// end send Logs
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    $scope.dosth = function() {
+      console.log('YO!');
+    };
+
+  });
+
+ /*
   .controller('ChatsCtrl', function($scope, Chats) {
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
@@ -131,3 +254,4 @@ angular.module('starter.controllers', [])
       enableFriends: true
     };
   });
+*/

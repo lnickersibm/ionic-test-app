@@ -1,0 +1,62 @@
+<ion-view view-title="Request Control"  >
+
+  <ion-content class="has-header  padding morePadding">
+    <!--<ion-header-bar class="bar-dark">-->
+      <h4 class="title">Response Data</h4>
+      <!-- New Task button-->
+
+
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          Method
+        </div>
+        <select ng-model="myVars.myMethod" ng-options="method for method in methods" ng-change="dosth()">
+          <option value="">-- choose method --</option>
+        </select>
+      </label>
+      Method chosen:
+      <div style="border:solid 1px black; width:100px; height:20px"
+           ng-style="{'background-color':green}">{{myVars.myMethod}}
+      </div>
+    </div>
+
+    <div class="list">
+      <label class="item item-input item-select">
+        <div class="input-label">
+          URL
+        </div>
+        <select ng-model="myVars.myUrl" ng-options="url for url in urls" ng-change="dosth()">
+          <option value="">-- choose url --</option>
+        </select>
+      </label>
+      Url chosen:
+      <div style="border:solid 1px black;  height:20px"
+           ng-style="{'background-color':green}">{{myVars.myUrl}}
+      </div>
+    </div>
+    <div class="list">
+
+      <div class="item item-input-inset">
+        <label class="item-input-wrapper">
+          <input type="text" placeholder="Body" ng-model="myVars.body">
+        </label>
+      </div>
+
+    </div>
+    <button class="button button-icon" ng-click="sendRequest()">
+      <i class="icon ion-ios-arrow-right"></i>
+    </button>
+    <!--</ion-header-bar>-->
+    <hr>
+    <ion-list>
+      <ion-item style="font-size:.7em;" ng-repeat="result in results track by $index">
+        {{result}}
+      </ion-item>
+    </ion-list>
+
+
+    </div>
+
+  </ion-content>
+</ion-view>

@@ -128,6 +128,7 @@ angular.module('starter.controllers', [])
 
     $scope.routes = [
       {"route": "http://mfptestbedapp.stage1.mybluemix.net", "guid":"5cf325a3-d325-4fb2-b4ca-1d8e46831c86"},
+      {"route": "http://larrymobileapp.mybluemix.net", "guid":"0784f7f5-208b-4da6-a70b-291169068908"},
       {"route": "http://s1-imf-dev-hackdayapp-larry.stage1.mybluemix.net?subzone=dev", "guid":"85e0e3f3-882b-46d6-b5e5-645ca05f80a4"},
     ];
 
@@ -168,6 +169,9 @@ angular.module('starter.controllers', [])
       // SET CAPTURE
       window.MFPLogger.setCapture($scope.myVars.isCapture);
 
+      // SET DEFUALT LOG LEVEL
+      window.MFPLogger.setLevel($scope.myVars.myLogLevel.value);
+
       //var guid = window.BMSClient.getBluemixAppGUID(function(guid) {
       //  console.error("javascript-BMSClient From index.js = BMSClient.getBluemixAppGUID(): " + guid)
       //  //add the result to the top of the array
@@ -189,7 +193,7 @@ angular.module('starter.controllers', [])
 
 
       if ( !$scope.myVars.myFilter || $scope.myVars.myFilter.length == 0){
-        $scope.myVars.myFilter = "{}"
+        $scope.myVars.myFilter = "{}";
       }
 
       //alert("Log Filters: " + $scope.myVars.myFilter);
@@ -199,11 +203,16 @@ angular.module('starter.controllers', [])
 
         window.MFPLogger.setFilters(theFilter);
 
+        if ($scope.myVars.myFilter == "{}"){
+          window.MFPLogger.setLevel($scope.myVars.myLogLevel.value);
+        }
+
         alert("Sending with Filters: " + JSON.stringify(theFilter, null, 2));
         console.log("Sending with Filters: " + JSON.stringify(theFilter, null, 2));
 
         // SEND THE LOG
         window.MFPLogger.send(success, failure);
+        window.MFPAnalytics.send(success, failure);
         //increment the sequencenumber
         $scope.myVars.sequenceNumber++
       }
@@ -227,8 +236,59 @@ angular.module('starter.controllers', [])
       console.log('YO!');
     };
 
-  });
+  })
 
+  .controller('SettingsCtrl', function($scope, $timeout) {
+
+    $scope.settingsList = [
+      { text: "Capture Enabled", checked: true },
+      //{ text: "GPS", checked: false },
+      //{ text: "Bluetooth", checked: false }
+    ];
+
+    $scope.loggerCaptureChanged = function() {
+      //alert('Logger Capture Changed: ' + $scope.settingsList[0].checked);
+      window.MFPLogger.setCapture($scope.settingsList[0].checked);
+
+
+      var getCapture = function () {
+        window.MFPLogger.getCapture(function (isCapture) {
+          alert("Capture is now: " + isCapture)
+        });
+      };
+
+      $timeout(getCapture, 500);
+
+      console.log('Logger Capture Changed', $scope.settingsList[0].checked);
+    };
+
+    $scope.analyticsCaptureChanged = function() {
+
+      //alert('Analytics Capture Changed: '+ $scope.analyticsCapture.checked);
+      if ($scope.analyticsCapture.checked){
+        //alert("ENABLING...");
+        window.MFPAnalytics.enable();
+      }
+      else{
+        //alert("DISABLING...");
+        window.MFPAnalytics.disable();
+      }
+
+      var getAnlyticsCaptureEnabled = function () {
+        window.MFPAnalytics.isEnabled(function (isEnabled) {
+          alert("Analytics Capture is now: " + isEnabled);
+        });
+      };
+
+      $timeout(getAnlyticsCaptureEnabled, 500);
+
+      console.log('Analytics Capture Changed', $scope.analyticsCapture.checked);
+    };
+
+    $scope.analyticsCapture = { checked: true };
+    //$scope.emailNotification = 'Subscribed';
+
+  });
  /*
   .controller('ChatsCtrl', function($scope, Chats) {
     // With the new view caching in Ionic, Controllers are only called
